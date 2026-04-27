@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reader</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/reader.css">
+  <link rel="stylesheet" href="/vendor/pdfjs/pdf_viewer.css">
+</head>
+<body>
+  <div id="reader-shell">
+    <div id="reader-toolbar">
+      <a href="/" class="reader-control" title="Library">&#8592; Library</a>
+      <span id="reader-title"></span>
+      <button class="reader-control" id="btn-zoom-out" title="Zoom out (-)">−</button>
+      <span id="zoom-label" class="reader-control" style="min-width:4ch;text-align:center">100%</span>
+      <button class="reader-control" id="btn-zoom-in" title="Zoom in (+)">+</button>
+      <button class="reader-control" id="btn-prev" title="Previous page (←)">&#8592;</button>
+      <span id="page-label" class="reader-control" style="min-width:6ch;text-align:center"></span>
+      <button class="reader-control" id="btn-next" title="Next page (→)">&#8594;</button>
+      <button class="reader-control" id="btn-fullscreen" title="Fullscreen (f)">&#x26F6;</button>
+      <button class="reader-control" id="btn-panel" title="Highlights">&#9776;</button>
+    </div>
+
+    <div id="reader-pane">
+      <div id="pdf-container" hidden></div>
+      <div id="epub-container" hidden></div>
+    </div>
+  </div>
+
+  <!-- Selection popup -->
+  <div id="selection-popup">
+    <div class="popup-swatches">
+      <button class="swatch" data-color="yellow" title="Yellow"></button>
+      <button class="swatch" data-color="green"  title="Green"></button>
+      <button class="swatch" data-color="blue"   title="Blue"></button>
+      <button class="swatch" data-color="pink"   title="Pink"></button>
+    </div>
+    <div class="popup-actions">
+      <button id="btn-translate">Translate</button>
+      <button id="btn-copy">Copy</button>
+      <button id="btn-note">Note</button>
+      <button id="btn-dismiss">✕</button>
+    </div>
+    <div id="translation-result" dir="rtl"></div>
+    <textarea id="note-input" placeholder="Add a note…"></textarea>
+  </div>
+
+  <!-- Highlights panel -->
+  <div id="highlights-panel">
+    <div id="panel-header">
+      <span>Highlights</span>
+      <button id="btn-close-panel">✕</button>
+    </div>
+    <div id="highlights-list"></div>
+  </div>
+
+  <div class="toast-area" id="toast-area"></div>
+
+  <script type="module" src="/js/reader.js"></script>
+</body>
+</html>

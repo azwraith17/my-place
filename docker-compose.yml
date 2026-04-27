@@ -1,0 +1,36 @@
+services:
+  reader-api:
+    build: ./reader-api
+    restart: unless-stopped
+    environment:
+      READER_PASSWORD: ${READER_PASSWORD}
+      COOKIE_SECRET: ${COOKIE_SECRET}
+      LIBRETRANSLATE_URL: ${LIBRETRANSLATE_URL:-http://libretranslate:5000}
+      LIBRARY_PATH: /library
+      DATA_PATH: /data
+    volumes:
+      - ./library:/library
+      - ./data:/data
+    depends_on:
+      - libretranslate
+
+  web:
+    image: nginx:alpine
+    restart: unless-stopped
+    volumes:
+      - ./web:/usr/share/nginx/html:ro
+      - ./nginx/reader.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "8080:80"
+    depends_on:
+      - reader-api
+
+  libretranslate:
+    image: libretranslate/libretranslate:latest
+    restart: unless-stopped
+    command: ["--load-only", "en,fa", "--api-keys-db-path", "/data/lt-keys.db"]
+    volumes:
+      - ./data/lt-models:/home/libretranslate/.local/share/argos-translate
+      - ./data:/data
+    environment:
+      LT_DISABLE_WEB_UI: "true"
