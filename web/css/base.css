@@ -26,6 +26,33 @@ html, body {
 a { color: var(--accent); text-decoration: none; }
 a:hover { color: var(--accent-hover); }
 
+header {
+  padding: 1rem 2rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--surface);
+}
+header h1 { font-size: 1.2rem; flex: 1; }
+
+.tool-nav {
+  padding: 0 2rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  background: var(--surface);
+}
+.tool-tab {
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.tool-tab:hover { color: var(--text); }
+.tool-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
 button {
   cursor: pointer;
   border: none;

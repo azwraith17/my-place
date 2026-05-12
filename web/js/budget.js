@@ -1,5 +1,8 @@
 import { api } from './api.js';
 import { ulid } from './ulid.js';
+import { initNav } from './nav.js';
+
+initNav('budget');
 
 const toastEl    = document.getElementById('toast-area');
 const monthLabel = document.getElementById('month-label');
@@ -180,12 +183,6 @@ document.getElementById('prev-month').addEventListener('click', () => {
 document.getElementById('next-month').addEventListener('click', () => {
   currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
   load();
-});
-
-// Logout
-document.getElementById('logout-btn').addEventListener('click', async () => {
-  await api.post('/api/auth/logout');
-  location.href = '/login.html';
 });
 
 // Set default date and load

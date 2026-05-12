@@ -1,9 +1,14 @@
 import { api } from './api.js';
+import { initNav } from './nav.js';
 
-const grid    = document.getElementById('library-grid');
-const toastEl = document.getElementById('toast-area');
-const searchInput  = document.getElementById('search-input');
+initNav('books', '<button class="btn" id="upload-btn">+ Upload</button><input type="file" id="upload-input" accept=".pdf,.epub" multiple>');
+
+const grid          = document.getElementById('library-grid');
+const toastEl       = document.getElementById('toast-area');
+const searchInput   = document.getElementById('search-input');
 const searchResults = document.getElementById('search-results');
+const uploadBtn     = document.getElementById('upload-btn');
+const uploadInput   = document.getElementById('upload-input');
 
 function toast(msg, isError = false) {
   const t = document.createElement('div');
@@ -70,14 +75,9 @@ async function loadLibrary() {
   }
 }
 
-// Upload
-const uploadBtn   = document.getElementById('upload-btn');
-const uploadInput = document.getElementById('upload-input');
-
 uploadBtn.addEventListener('click', () => uploadInput.click());
 uploadInput.addEventListener('change', () => handleFiles(Array.from(uploadInput.files)));
 
-// Drag-and-drop on grid
 grid.addEventListener('dragover', e => { e.preventDefault(); grid.classList.add('drag-over'); });
 grid.addEventListener('dragleave', () => grid.classList.remove('drag-over'));
 grid.addEventListener('drop', e => {
@@ -101,7 +101,6 @@ async function handleFiles(files) {
   }
 }
 
-// Search
 let searchTimer;
 searchInput.addEventListener('input', () => {
   clearTimeout(searchTimer);
@@ -132,12 +131,6 @@ async function runSearch(q) {
     /* silently ignore search errors */
   }
 }
-
-// Logout
-document.getElementById('logout-btn').addEventListener('click', async () => {
-  await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-  location.href = '/login.html';
-});
 
 function esc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');

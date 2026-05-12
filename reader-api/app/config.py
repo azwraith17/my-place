@@ -7,7 +7,6 @@ class Settings(BaseSettings):
 
     reader_password: str = "changeme"
     cookie_secret: str = "change-me"
-    libretranslate_url: str = "http://libretranslate:5000"
     library_path: Path = Path("/library")
     data_path: Path = Path("/data")
     cookie_name: str = "reader_session"

@@ -6,23 +6,6 @@
   <title>Budget — Library</title>
   <link rel="stylesheet" href="/css/base.css">
   <style>
-    .tool-nav {
-      padding: 0 2rem;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      background: var(--surface);
-    }
-    .tool-tab {
-      padding: 0.6rem 1.2rem;
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      border-bottom: 2px solid transparent;
-      margin-bottom: -1px;
-      transition: color 0.15s, border-color 0.15s;
-    }
-    .tool-tab:hover { color: var(--text); }
-    .tool-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-
     .budget-top {
       padding: 1.5rem 2rem 1rem;
       display: flex;
@@ -120,14 +103,7 @@
   </style>
 </head>
 <body>
-  <header>
-    <h1>Library</h1>
-    <button class="btn btn-ghost" id="logout-btn">Logout</button>
-  </header>
-  <nav class="tool-nav">
-    <a href="/library.html" class="tool-tab">Books</a>
-    <a href="/budget.html" class="tool-tab active">Budget</a>
-  </nav>
+  <!-- header and nav injected by nav.js -->
 
   <div class="budget-top">
     <div class="month-nav">

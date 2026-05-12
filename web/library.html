@@ -3,20 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Library — Reader</title>
+  <title>Library</title>
   <link rel="stylesheet" href="/css/base.css">
   <style>
     body { min-height: 100vh; }
-
-    header {
-      padding: 1rem 2rem;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      background: var(--surface);
-    }
-    header h1 { font-size: 1.2rem; flex: 1; }
 
     #search-bar {
       padding: 1.5rem 2rem 0.5rem;
@@ -117,36 +107,10 @@
     #upload-input { display: none; }
     .empty-msg { text-align: center; color: var(--text-muted); padding: 3rem; grid-column: 1/-1; }
     .toast-area { position: fixed; bottom: 1.5rem; right: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; z-index: 9999; }
-
-    .tool-nav {
-      padding: 0 2rem;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      background: var(--surface);
-    }
-    .tool-tab {
-      padding: 0.6rem 1.2rem;
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      border-bottom: 2px solid transparent;
-      margin-bottom: -1px;
-      transition: color 0.15s, border-color 0.15s;
-    }
-    .tool-tab:hover { color: var(--text); }
-    .tool-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Library</h1>
-    <button class="btn" id="upload-btn">+ Upload</button>
-    <button class="btn btn-ghost" id="logout-btn">Logout</button>
-    <input type="file" id="upload-input" accept=".pdf,.epub" multiple>
-  </header>
-  <nav class="tool-nav">
-    <a href="/library.html" class="tool-tab active">Books</a>
-    <a href="/budget.html" class="tool-tab">Budget</a>
-  </nav>
+  <!-- header and nav injected by nav.js -->
 
   <div id="search-bar">
     <input type="search" id="search-input" placeholder="Search highlights…">
