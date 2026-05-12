@@ -3,138 +3,154 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Library — Reader</title>
-  <link rel="stylesheet" href="/css/base.css">
+  <title>My Place</title>
   <style>
-    body { min-height: 100vh; }
-
-    header {
-      padding: 1rem 2rem;
-      border-bottom: 1px solid var(--border);
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #060618;
+      font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+      min-height: 100svh;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 1rem;
-      background: var(--surface);
-    }
-    header h1 { font-size: 1.2rem; flex: 1; }
-
-    #search-bar {
-      padding: 1.5rem 2rem 0.5rem;
-    }
-    #search-bar input {
-      width: 100%;
-      max-width: 480px;
-      padding: 0.5em 0.8em;
-    }
-
-    #search-results {
-      padding: 0 2rem 1rem;
-    }
-    .search-result {
-      padding: 0.5em;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
-    }
-    .search-result:hover { background: var(--surface2); }
-    .search-result mark { background: rgba(107,140,255,0.3); border-radius: 2px; }
-
-    #library-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      justify-content: center;
       gap: 1.5rem;
-      padding: 1.5rem 2rem;
+      padding: 2rem 1rem;
+      animation: appear 2s ease;
     }
-
-    .book-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.15s;
-      position: relative;
+    @keyframes appear { from { opacity: 0; } to { opacity: 1; } }
+    h1 {
+      font-size: clamp(1rem, 3vw, 1.5rem);
+      font-weight: 400;
+      letter-spacing: 0.5em;
+      color: #b8b8e0;
+      text-indent: 0.5em;
     }
-    .book-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
-    .book-cover {
-      width: 100%;
-      aspect-ratio: 2/3;
-      object-fit: cover;
-      background: var(--surface2);
+    p {
+      font-size: 0.68rem;
+      letter-spacing: 0.3em;
+      color: #2a2a54;
+      margin-top: -0.8rem;
+      text-indent: 0.3em;
+    }
+    canvas {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      width: min(560px, 92vw);
+      aspect-ratio: 80 / 60;
       display: block;
+      box-shadow: 0 0 60px rgba(12, 12, 70, 0.6);
     }
-    .book-cover-placeholder {
-      width: 100%;
-      aspect-ratio: 2/3;
-      background: var(--surface2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.5rem;
-    }
-    .book-info {
-      padding: 0.6rem 0.7rem;
-    }
-    .book-title { font-weight: 600; font-size: 0.85rem; line-height: 1.3; margin-bottom: 0.2rem; }
-    .book-author { font-size: 0.75rem; color: var(--text-muted); }
-    .book-badge {
-      position: absolute;
-      top: 0.4rem;
-      right: 0.4rem;
-      background: rgba(0,0,0,0.7);
-      color: #fff;
-      font-size: 0.65rem;
-      padding: 0.15em 0.4em;
-      border-radius: 3px;
-      text-transform: uppercase;
-    }
-    .delete-btn {
-      position: absolute;
-      top: 0.4rem;
-      left: 0.4rem;
-      background: rgba(0,0,0,0.7);
-      color: #fff;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-    }
-    .book-card:hover .delete-btn { display: flex; }
-
-    #upload-zone {
-      border: 2px dashed var(--border);
-      border-radius: var(--radius);
-      padding: 2rem;
-      text-align: center;
-      cursor: pointer;
-      color: var(--text-muted);
-      transition: border-color 0.15s, background 0.15s;
-    }
-    #upload-zone.drag-over { border-color: var(--accent); background: rgba(107,140,255,0.05); }
-
-    #upload-input { display: none; }
-    .empty-msg { text-align: center; color: var(--text-muted); padding: 3rem; grid-column: 1/-1; }
-    .toast-area { position: fixed; bottom: 1.5rem; right: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; z-index: 9999; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Library</h1>
-    <button class="btn" id="upload-btn">+ Upload</button>
-    <button class="btn btn-ghost" id="logout-btn">Logout</button>
-    <input type="file" id="upload-input" accept=".pdf,.epub" multiple>
-  </header>
+  <h1>my place</h1>
+  <p>a quiet corner</p>
+  <canvas id="s" width="80" height="60"></canvas>
+  <script>
+  (function () {
+    const cv = document.getElementById('s');
+    const cx = cv.getContext('2d');
+    const W = 80, H = 60, HZ = 36;
 
-  <div id="search-bar">
-    <input type="search" id="search-input" placeholder="Search highlights…">
-  </div>
-  <div id="search-results" hidden></div>
+    const B = (x, y, w, h, c) => { cx.fillStyle = c; cx.fillRect(x, y, w, h); };
+    const P = (x, y, c) => { if (x>=0&&x<W&&y>=0&&y<H){cx.fillStyle=c;cx.fillRect(x,y,1,1);} };
+    const R = (y, x1, x2, c) => {
+      const a = Math.max(0, x1|0), b = Math.min(W-1, x2|0);
+      if (a <= b) { cx.fillStyle = c; cx.fillRect(a, y, b-a+1, 1); }
+    };
 
-  <div id="library-grid"></div>
-  <div class="toast-area" id="toast-area"></div>
+    // Sky bands (dark top → slightly less dark at horizon)
+    B(0,  0, W,  6, '#060618');
+    B(0,  6, W,  6, '#080820');
+    B(0, 12, W,  6, '#0a0a28');
+    B(0, 18, W,  6, '#0d0d32');
+    B(0, 24, W,  5, '#11113e');
+    B(0, 29, W,  4, '#16164e');
+    B(0, 33, W,  3, '#1c1c5c');
 
-  <script type="module" src="/js/library.js"></script>
+    // Lake (lighter near horizon = reflects near-horizon sky, darker at far end)
+    B(0, 36, W,  5, '#191958');
+    B(0, 41, W,  6, '#141446');
+    B(0, 47, W,  7, '#0e0e32');
+    B(0, 54, W,  6, '#08081e');
+
+    // Stars — three brightness levels
+    [
+      [3,1,0],[16,2,2],[28,1,1],[41,3,0],[54,1,2],[67,2,1],[78,1,0],
+      [8,6,1],[20,5,0],[33,7,2],[46,5,1],[59,6,0],[72,7,2],
+      [5,10,0],[13,11,1],[23,9,2],[36,11,0],[48,10,1],[57,9,0],[65,11,2],[74,10,1],
+      [2,15,1],[11,14,0],[24,16,2],[32,14,1],[43,15,0],[51,16,2],[61,14,1],[72,15,0],[79,16,2],
+      [7,21,0],[18,20,1],[29,22,2],[40,21,0],[50,20,1],[60,22,0],[69,21,2],
+      [4,27,1],[15,26,0],[26,28,2],[45,25,1],[67,27,0],[76,26,2],
+    ].forEach(([x,y,b]) => P(x, y, ['#3e3e74','#7878b0','#c8c8f8'][b]));
+
+    // Moon — faint halo, then right-facing crescent ☾
+    const [MX, MY, MR] = [65, 9, 5];
+    for (let dy = -MR-1; dy <= MR+1; dy++)
+      for (let dx = -MR-1; dx <= MR+1; dx++) {
+        const d2 = dx*dx + dy*dy;
+        if (d2 > MR*MR && d2 <= (MR+1)*(MR+1)) P(MX+dx, MY+dy, '#101048');
+      }
+    for (let dy = -MR; dy <= MR; dy++)
+      for (let dx = -MR; dx <= MR; dx++)
+        if (dx*dx + dy*dy <= MR*MR) {
+          const hx = dx + 2; // inner shadow disc offset left → right side lit
+          if (hx*hx + dy*dy > (MR-1)*(MR-1))
+            P(MX+dx, MY+dy, Math.abs(dy) <= 1 ? '#fff8e0' : '#ffedb8');
+        }
+
+    // Mountains — painted back to front (darker = nearer)
+    const mtn = (px, py, lx, rx, c) => {
+      for (let y = py; y < HZ; y++) {
+        const t = (y - py) / (HZ - py);
+        R(y, (lx + (px-lx)*(1-t))|0, (rx - (rx-px)*(1-t))|0, c);
+      }
+    };
+    mtn(13, 23,  -2,  31, '#0b0b22'); // far left
+    mtn(58, 21,  34,  83, '#0a0a20'); // far right
+    mtn(37, 14,  10,  64, '#080820'); // tall center
+    mtn( 5, 28, -10,  20, '#060618'); // near left bump
+    mtn(71, 29,  60,  90, '#050516'); // near right bump
+
+    // Shore
+    R(HZ-1, 0, W-1, '#0d1c0e');
+    R(HZ,   0, W-1, '#0b180c');
+
+    // Pixel trees along the shore
+    const trees = [3, 12, 26, 32, 53, 71, 77];
+    trees.forEach(tx => {
+      P(tx, HZ-1, '#07100a'); P(tx, HZ-2, '#07100a');
+      R(HZ-3, tx-1, tx+1, '#08130b');
+      R(HZ-4, tx-2, tx+2, '#071008');
+      R(HZ-5, tx-1, tx+1, '#08130b');
+      P(tx, HZ-6, '#07100a');
+    });
+
+    // Moon reflection — shimmering column of light in the lake
+    for (let y = HZ+1; y < H; y++) {
+      const t = (y - HZ) / (H - HZ);
+      const sp = Math.round(1 + t * 5);
+      for (let dx = -sp; dx <= sp; dx++) {
+        if (Math.random() > Math.abs(dx) / (sp+1) * 0.65) {
+          const v = 12 + ((1-t) * 20)|0;
+          P(MX+dx, y, `rgb(${v},${v},${v+26})`);
+        }
+      }
+    }
+
+    // Water ripples
+    [
+      [2,40,8],[18,43,6],[31,46,10],[50,42,7],[62,45,8],
+      [9,49,6],[26,52,9],[44,55,5],[62,58,7],[13,57,4],
+    ].forEach(([x,y,l]) => R(y, x, x+l, '#181848'));
+
+    // Tree reflections in the lake
+    trees.forEach(tx => {
+      for (let dy = 1; dy <= 4; dy++)
+        if (Math.random() > 0.35) P(tx, HZ+dy, '#08130b');
+    });
+  })();
+  </script>
 </body>
 </html>

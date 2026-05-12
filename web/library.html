@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library — Reader</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <style>
+    body { min-height: 100vh; }
+
+    header {
+      padding: 1rem 2rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: var(--surface);
+    }
+    header h1 { font-size: 1.2rem; flex: 1; }
+
+    #search-bar {
+      padding: 1.5rem 2rem 0.5rem;
+    }
+    #search-bar input {
+      width: 100%;
+      max-width: 480px;
+      padding: 0.5em 0.8em;
+    }
+
+    #search-results {
+      padding: 0 2rem 1rem;
+    }
+    .search-result {
+      padding: 0.5em;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+    }
+    .search-result:hover { background: var(--surface2); }
+    .search-result mark { background: rgba(107,140,255,0.3); border-radius: 2px; }
+
+    #library-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1.5rem;
+      padding: 1.5rem 2rem;
+    }
+
+    .book-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      position: relative;
+    }
+    .book-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+    .book-cover {
+      width: 100%;
+      aspect-ratio: 2/3;
+      object-fit: cover;
+      background: var(--surface2);
+      display: block;
+    }
+    .book-cover-placeholder {
+      width: 100%;
+      aspect-ratio: 2/3;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+    }
+    .book-info {
+      padding: 0.6rem 0.7rem;
+    }
+    .book-title { font-weight: 600; font-size: 0.85rem; line-height: 1.3; margin-bottom: 0.2rem; }
+    .book-author { font-size: 0.75rem; color: var(--text-muted); }
+    .book-badge {
+      position: absolute;
+      top: 0.4rem;
+      right: 0.4rem;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      font-size: 0.65rem;
+      padding: 0.15em 0.4em;
+      border-radius: 3px;
+      text-transform: uppercase;
+    }
+    .delete-btn {
+      position: absolute;
+      top: 0.4rem;
+      left: 0.4rem;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+    .book-card:hover .delete-btn { display: flex; }
+
+    #upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: border-color 0.15s, background 0.15s;
+    }
+    #upload-zone.drag-over { border-color: var(--accent); background: rgba(107,140,255,0.05); }
+
+    #upload-input { display: none; }
+    .empty-msg { text-align: center; color: var(--text-muted); padding: 3rem; grid-column: 1/-1; }
+    .toast-area { position: fixed; bottom: 1.5rem; right: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; z-index: 9999; }
+
+    .tool-nav {
+      padding: 0 2rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      background: var(--surface);
+    }
+    .tool-tab {
+      padding: 0.6rem 1.2rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .tool-tab:hover { color: var(--text); }
+    .tool-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Library</h1>
+    <button class="btn" id="upload-btn">+ Upload</button>
+    <button class="btn btn-ghost" id="logout-btn">Logout</button>
+    <input type="file" id="upload-input" accept=".pdf,.epub" multiple>
+  </header>
+  <nav class="tool-nav">
+    <a href="/library.html" class="tool-tab active">Books</a>
+    <a href="/budget.html" class="tool-tab">Budget</a>
+  </nav>
+
+  <div id="search-bar">
+    <input type="search" id="search-input" placeholder="Search highlights…">
+  </div>
+  <div id="search-results" hidden></div>
+
+  <div id="library-grid"></div>
+  <div class="toast-area" id="toast-area"></div>
+
+  <script type="module" src="/js/library.js"></script>
+</body>
+</html>

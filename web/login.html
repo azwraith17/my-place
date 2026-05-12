@@ -42,7 +42,7 @@
         credentials: 'include',
       });
       if (res.ok) {
-        const next = new URLSearchParams(location.search).get('next') || '/';
+        const next = new URLSearchParams(location.search).get('next') || '/library.html';
         location.href = next;
       } else {
         err.style.display = 'block';

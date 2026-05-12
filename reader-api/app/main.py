@@ -11,6 +11,7 @@ from .highlights.router import router as highlights_router
 from .translate.router import router as translate_router
 from .search.router import router as search_router
 from .progress.router import router as progress_router
+from .budget.router import router as budget_router
 from .search.index import startup_verify
 from .config import settings
 
@@ -41,6 +42,7 @@ app.include_router(highlights_router)
 app.include_router(translate_router)
 app.include_router(search_router)
 app.include_router(progress_router)
+app.include_router(budget_router)
 
 # Serve frontend static files at / (API routes take priority above)
 if _WEB_DIR.exists():

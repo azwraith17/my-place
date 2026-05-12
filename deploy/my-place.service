@@ -3,11 +3,11 @@ Description=my-place reader service
 After=network.target
 
 [Service]
-User=pi
-Group=pi
-WorkingDirectory=/home/pi/my-place/reader-api
-EnvironmentFile=/home/pi/my-place/.env
-ExecStart=/home/pi/my-place/venv/bin/python -m uvicorn app.main:app \
+User=azwraith176
+Group=azwraith176
+WorkingDirectory=/home/azwraith176/projects/my-place/my-place/reader-api
+EnvironmentFile=/home/azwraith176/projects/my-place/my-place/.env
+ExecStart=/home/azwraith176/projects/my-place/my-place/venv/bin/python -m uvicorn app.main:app \
     --host 0.0.0.0 \
     --port 8000 \
     --workers 1
