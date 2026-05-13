@@ -3,123 +3,254 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Library</title>
+  <title>My Library — My Place</title>
   <link rel="stylesheet" href="/css/base.css">
   <style>
     body { min-height: 100vh; }
 
-    #search-bar {
-      padding: 1.5rem 2rem 0.5rem;
-    }
-    #search-bar input {
-      width: 100%;
+    /* ── Search bar ── */
+    #search-bar { padding: 1.25rem 2rem 0.6rem; }
+    .search-wrap {
+      position: relative;
       max-width: 480px;
-      padding: 0.5em 0.8em;
+    }
+    .search-icon {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 15px;
+      height: 15px;
+      color: var(--text-muted);
+      pointer-events: none;
+      flex-shrink: 0;
+    }
+    .search-wrap input {
+      width: 100%;
+      padding-left: 2.3rem;
+      font-size: 0.9rem;
     }
 
-    #search-results {
-      padding: 0 2rem 1rem;
+    /* ── Shelf bar ── */
+    #shelf-bar {
+      padding: 0.3rem 2rem 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
+    #book-count {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ── Search results ── */
+    #search-results { padding: 0 2rem 0.5rem; }
     .search-result {
-      padding: 0.5em;
+      padding: 0.6em 0.5em;
       border-bottom: 1px solid var(--border);
       cursor: pointer;
+      font-size: 0.875rem;
     }
     .search-result:hover { background: var(--surface2); }
-    .search-result mark { background: rgba(107,140,255,0.3); border-radius: 2px; }
+    .search-result mark { background: rgba(107,140,255,0.25); border-radius: 2px; color: var(--text); }
 
+    /* ── Library grid ── */
     #library-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
       gap: 1.5rem;
-      padding: 1.5rem 2rem;
+      padding: 0 2rem 4rem;
     }
 
+    /* ── Book card ── */
     .book-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden;
       cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.15s;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s;
       position: relative;
+      box-shadow: var(--shadow-sm);
+      content-visibility: auto;
+      contain-intrinsic-size: 0 280px;
     }
-    .book-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+    .book-card:hover {
+      transform: translateY(-5px) scale(1.015);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.7), 0 0 0 1px rgba(107,140,255,0.15);
+      border-color: rgba(107,140,255,0.3);
+    }
     .book-cover {
       width: 100%;
       aspect-ratio: 2/3;
       object-fit: cover;
-      background: var(--surface2);
       display: block;
+      image-rendering: pixelated; /* keep pixel art crisp */
     }
-    .book-cover-placeholder {
-      width: 100%;
-      aspect-ratio: 2/3;
-      background: var(--surface2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.5rem;
+    /* Restore smooth rendering for real photo covers */
+    .book-cover[src^="http"],
+    .book-cover[src^="/api"] {
+      image-rendering: auto;
     }
     .book-info {
-      padding: 0.6rem 0.7rem;
+      padding: 0.65rem 0.75rem 0.7rem;
+      border-top: 1px solid var(--border);
     }
-    .book-title { font-weight: 600; font-size: 0.85rem; line-height: 1.3; margin-bottom: 0.2rem; }
-    .book-author { font-size: 0.75rem; color: var(--text-muted); }
+    .book-title {
+      font-weight: 600;
+      font-size: 0.82rem;
+      line-height: 1.35;
+      margin-bottom: 0.25rem;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .book-author { font-size: 0.72rem; color: var(--text-muted); }
     .book-badge {
       position: absolute;
-      top: 0.4rem;
-      right: 0.4rem;
-      background: rgba(0,0,0,0.7);
-      color: #fff;
-      font-size: 0.65rem;
-      padding: 0.15em 0.4em;
-      border-radius: 3px;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: rgba(0,0,0,0.72);
+      backdrop-filter: blur(4px);
+      color: rgba(255,255,255,0.8);
+      font-size: 0.58rem;
+      font-weight: 700;
+      padding: 0.18em 0.5em;
+      border-radius: 4px;
       text-transform: uppercase;
+      letter-spacing: 0.07em;
     }
     .delete-btn {
       position: absolute;
-      top: 0.4rem;
-      left: 0.4rem;
-      background: rgba(0,0,0,0.7);
-      color: #fff;
+      top: 0.5rem;
+      left: 0.5rem;
+      background: rgba(0,0,0,0.72);
+      backdrop-filter: blur(4px);
+      color: rgba(255,255,255,0.8);
       width: 22px;
       height: 22px;
       border-radius: 50%;
       display: none;
       align-items: center;
       justify-content: center;
-      font-size: 0.8rem;
+      font-size: 0.72rem;
+      transition: background 0.15s;
     }
+    .delete-btn:hover { background: rgba(220,50,50,0.85); }
     .book-card:hover .delete-btn { display: flex; }
 
-    #upload-zone {
-      border: 2px dashed var(--border);
-      border-radius: var(--radius);
-      padding: 2rem;
-      text-align: center;
-      cursor: pointer;
-      color: var(--text-muted);
-      transition: border-color 0.15s, background 0.15s;
+    /* ── Upload group ── */
+    .upload-group {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
     }
-    #upload-zone.drag-over { border-color: var(--accent); background: rgba(107,140,255,0.05); }
+    .upload-group select {
+      font-size: 0.82rem;
+      padding: 0.3em 0.6em;
+      height: 32px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+    }
 
+    /* ── Filter tabs ── */
+    #filter-bar {
+      padding: 0 2rem 0.7rem;
+      display: flex;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+    .filter-tab {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.28em 0.75em;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .filter-tab:hover { background: var(--surface2); color: var(--text); }
+    .filter-tab.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* ── Drag target ── */
     #upload-input { display: none; }
-    .empty-msg { text-align: center; color: var(--text-muted); padding: 3rem; grid-column: 1/-1; }
-    .toast-area { position: fixed; bottom: 1.5rem; right: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; z-index: 9999; }
+    #library-grid.drag-over {
+      outline: 2px dashed var(--accent);
+      outline-offset: -4px;
+      background: var(--accent-dim);
+    }
+
+    /* ── Empty state ── */
+    .empty-msg {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: var(--text-muted);
+      padding: 3rem 2rem 4rem;
+      font-size: 0.9rem;
+      line-height: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+    }
+    .empty-msg p { line-height: 1.8; }
+    .empty-shelf { opacity: 0.5; }
   </style>
 </head>
 <body>
   <!-- header and nav injected by nav.js -->
 
   <div id="search-bar">
-    <input type="search" id="search-input" placeholder="Search highlights…">
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M10.5 10.5L13.5 13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <input type="search" id="search-input" placeholder="Search highlights…">
+    </div>
   </div>
+
   <div id="search-results" hidden></div>
+
+  <div id="filter-bar"></div>
+
+  <div id="shelf-bar">
+    <span id="book-count"></span>
+    <svg viewBox="0 0 96 12" width="96" height="12" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" style="opacity:0.65">
+      <!-- 4 pixel diamond sparkles -->
+      <rect x="4"  y="0"  width="4" height="4" fill="#6b8cff"/>
+      <rect x="0"  y="4"  width="12" height="4" fill="#6b8cff"/>
+      <rect x="4"  y="8"  width="4" height="4" fill="#6b8cff"/>
+      <rect x="28" y="0"  width="4" height="4" fill="#c050ff"/>
+      <rect x="24" y="4"  width="12" height="4" fill="#c050ff"/>
+      <rect x="28" y="8"  width="4" height="4" fill="#c050ff"/>
+      <rect x="52" y="0"  width="4" height="4" fill="#40c0c0"/>
+      <rect x="48" y="4"  width="12" height="4" fill="#40c0c0"/>
+      <rect x="52" y="8"  width="4" height="4" fill="#40c0c0"/>
+      <rect x="76" y="0"  width="4" height="4" fill="#ffc040"/>
+      <rect x="72" y="4"  width="12" height="4" fill="#ffc040"/>
+      <rect x="76" y="8"  width="4" height="4" fill="#ffc040"/>
+    </svg>
+  </div>
 
   <div id="library-grid"></div>
   <div class="toast-area" id="toast-area"></div>
 
-  <script type="module" src="/js/library.js"></script>
+  <script type="module" src="/js/library.js?v=4"></script>
 </body>
 </html>

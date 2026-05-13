@@ -1,8 +1,8 @@
 import { api } from './api.js';
 
 const TABS = [
-  { id: 'books',  label: 'Books',  href: '/library.html' },
-  { id: 'budget', label: 'Budget', href: '/budget.html' },
+  { id: 'library', label: 'My Library', href: '/library.html' },
+  { id: 'budget',  label: 'Budget',     href: '/budget.html' },
 ];
 
 export function initNav(activeTab, extraHeaderHTML = '') {
@@ -12,11 +12,13 @@ export function initNav(activeTab, extraHeaderHTML = '') {
 
   const frag = document.createRange().createContextualFragment(`
     <header>
-      <h1>Library</h1>
-      ${extraHeaderHTML}
-      <button class="btn btn-ghost" id="logout-btn">Logout</button>
+      <a href="/library.html" class="header-logo">MY PLACE</a>
+      <nav class="header-nav">${tabs}</nav>
+      <div class="header-actions">
+        ${extraHeaderHTML}
+        <button class="btn btn-ghost btn-sm" id="logout-btn">Logout</button>
+      </div>
     </header>
-    <nav class="tool-nav">${tabs}</nav>
   `);
 
   document.body.prepend(frag);

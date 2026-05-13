@@ -85,6 +85,37 @@ async function _renderPage(pageNum) {
   await textLayer.render();
 }
 
+// ── Outline ──────────────────────────────────────────────────────────────────
+
+export async function getOutline() {
+  if (!_pdfDoc) return [];
+  const raw = await _pdfDoc.getOutline();
+  if (!raw || !raw.length) return [];
+  return _processOutlineItems(raw);
+}
+
+async function _processOutlineItems(items) {
+  const result = [];
+  for (const item of items) {
+    const title = item.title || '(untitled)';
+    const dest  = item.dest;
+    const children = item.items?.length ? await _processOutlineItems(item.items) : [];
+    result.push({
+      title,
+      children,
+      navigate: async () => {
+        try {
+          let ref = typeof dest === 'string' ? await _pdfDoc.getDestination(dest) : dest;
+          if (!ref) return;
+          const pageIndex = await _pdfDoc.getPageIndex(ref[0]);
+          _gotoPage(pageIndex + 1);
+        } catch { /* ignore bad dest */ }
+      },
+    });
+  }
+  return result;
+}
+
 // ── Highlights (CSS Custom Highlight API) ────────────────────────────────────
 
 const _hlColors = {

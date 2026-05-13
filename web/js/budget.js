@@ -1,6 +1,6 @@
 import { api } from './api.js';
 import { ulid } from './ulid.js';
-import { initNav } from './nav.js';
+import { initNav } from './nav.js?v=3';
 
 initNav('budget');
 

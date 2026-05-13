@@ -65,6 +65,20 @@ export function goToLocation(location) {
   _view.goTo(location.cfi).catch(() => {});
 }
 
+export async function getOutline() {
+  if (!_view) return [];
+  const toc = _view.book?.toc ?? [];
+  return _processTocItems(toc);
+}
+
+function _processTocItems(items) {
+  return (items || []).map(item => ({
+    title: item.label || item.title || '(untitled)',
+    children: _processTocItems(item.subitems ?? item.items ?? []),
+    navigate: () => _view?.goTo(item.href).catch(() => {}),
+  }));
+}
+
 function _attachSelectionListener() {
   // foliate-js fires 'selection' events on the view element
   _view.addEventListener('selection', e => {

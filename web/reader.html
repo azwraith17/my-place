@@ -11,7 +11,7 @@
 <body>
   <div id="reader-shell">
     <div id="reader-toolbar">
-      <a href="/" class="reader-control" title="Library">&#8592; Library</a>
+      <a href="/library.html" class="reader-control" title="Library">&#8592; Library</a>
       <span id="reader-title"></span>
       <button class="reader-control" id="btn-zoom-out" title="Zoom out (-)">−</button>
       <span id="zoom-label" class="reader-control" style="min-width:4ch;text-align:center">100%</span>
@@ -20,7 +20,8 @@
       <span id="page-label" class="reader-control" style="min-width:6ch;text-align:center"></span>
       <button class="reader-control" id="btn-next" title="Next page (→)">&#8594;</button>
       <button class="reader-control" id="btn-fullscreen" title="Fullscreen (f)">&#x26F6;</button>
-      <button class="reader-control" id="btn-panel" title="Highlights">&#9776;</button>
+      <button class="reader-control" id="btn-outline" title="Table of Contents">&#8801;</button>
+      <button class="reader-control" id="btn-panel" title="Highlights">&#9673;</button>
     </div>
 
     <div id="reader-pane">
@@ -45,6 +46,15 @@
     </div>
     <div id="translation-result" dir="rtl"></div>
     <textarea id="note-input" placeholder="Add a note…"></textarea>
+  </div>
+
+  <!-- Outline / TOC panel -->
+  <div id="outline-panel">
+    <div id="outline-header">
+      <span>Contents</span>
+      <button id="btn-close-outline">&#x2715;</button>
+    </div>
+    <div id="outline-tree"></div>
   </div>
 
   <!-- Highlights panel -->

@@ -31,9 +31,10 @@ export const api = {
   put:    (url, body)  => request('PUT',    url, body),
   delete: (url)        => request('DELETE', url),
 
-  uploadBook(file) {
+  uploadBook(file, shelfType = 'book') {
     const fd = new FormData();
     fd.append('file', file);
+    fd.append('shelf_type', shelfType);
     return fetch('/api/books', {
       method: 'POST',
       credentials: 'include',

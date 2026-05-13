@@ -11,7 +11,7 @@ const params = new URLSearchParams(location.search);
 const bookId = params.get('id');
 const jumpTo = params.get('hl'); // highlight id to jump to after load
 
-if (!bookId) { location.href = '/'; }
+if (!bookId) { location.href = '/library.html'; }
 
 const titleEl = document.getElementById('reader-title');
 
@@ -78,6 +78,72 @@ async function boot() {
   document.getElementById('btn-fullscreen').addEventListener('click', () => {
     document.documentElement.requestFullscreen?.();
   });
+
+  // Outline panel
+  const outlinePanel = document.getElementById('outline-panel');
+  document.getElementById('btn-outline').addEventListener('click', () => {
+    outlinePanel.classList.toggle('open');
+  });
+  document.getElementById('btn-close-outline').addEventListener('click', () => {
+    outlinePanel.classList.remove('open');
+  });
+
+  const outline = await readerModule.getOutline?.() ?? [];
+  _renderOutlineTree(document.getElementById('outline-tree'), outline);
+}
+
+function _renderOutlineTree(container, items, depth = 0) {
+  if (!items.length) {
+    if (depth === 0) {
+      container.innerHTML = '<div class="outline-empty">No outline available</div>';
+    }
+    return;
+  }
+  const group = document.createElement('div');
+  group.className = 'outline-group';
+  items.forEach(item => {
+    const entry = document.createElement('div');
+    entry.className = 'outline-entry';
+    entry.style.paddingLeft = (depth * 14 + 12) + 'px';
+
+    if (item.children.length) {
+      const toggle = document.createElement('button');
+      toggle.className = 'outline-toggle';
+      toggle.textContent = '▶';
+      entry.appendChild(toggle);
+
+      const title = document.createElement('span');
+      title.className = 'outline-title';
+      title.textContent = item.title;
+      entry.appendChild(title);
+
+      const childWrap = document.createElement('div');
+      childWrap.hidden = true;
+      _renderOutlineTree(childWrap, item.children, depth + 1);
+
+      toggle.addEventListener('click', () => {
+        childWrap.hidden = !childWrap.hidden;
+        toggle.textContent = childWrap.hidden ? '▶' : '▼';
+      });
+      title.addEventListener('click', () => item.navigate());
+
+      group.appendChild(entry);
+      group.appendChild(childWrap);
+    } else {
+      const placeholder = document.createElement('span');
+      placeholder.className = 'outline-no-toggle';
+      entry.appendChild(placeholder);
+
+      const title = document.createElement('span');
+      title.className = 'outline-title';
+      title.textContent = item.title;
+      title.addEventListener('click', () => item.navigate());
+      entry.appendChild(title);
+
+      group.appendChild(entry);
+    }
+  });
+  container.appendChild(group);
 }
 
 function _startProgressSaving(format) {
